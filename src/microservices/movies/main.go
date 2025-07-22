@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -83,7 +84,7 @@ func handleMovies(w http.ResponseWriter, r *http.Request) {
 
 func getAllMovies(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.Query("SELECT id, title, description, rating FROM movies")
-	fmt.Println("get movies from movies")
+	fmt.Printf("%s: get movies from movies\n", time.Now().Format("2006-01-02 15:04:05"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
