@@ -1,0 +1,44 @@
+@startuml
+!include <C4/C4_Container>
+
+Person(user, "Пользователь", "Использует приложение для управления умными устройствами")
+
+System_Boundary(c1, "Cinema"){
+    ContainerQueue(queue, "Message Queue", "Kafka", "Очередь для обмена сообщениями между сервисами")
+    Container(proxy, "Api gateway", "Go", "Проксирование запросов на микросервисы")
+    Container(users, "Users", "Go", "Управление пользователями")
+    Container(payments, "Payments", "Go", "Управление платежами")
+    Container(movies, "Movies", "Go", "Управление фильмами")
+}
+ContainerDb(users_db, "Users DB", "PostgreSQL", "База данных для хранения данных о пользователях")
+Rel(users, users_db, "Сохранение/получение данных пользователей", "tcp/SQL")
+
+Container_Ext(payment_service, "Payment service", "Платежная система")
+Rel(payments, payment_service, "Выполнение платежей", "JSON/HTTP")
+
+ContainerQueue_Ext(rec_queue, "Message Queue", "rabbit mq", "Очередь для взаимодействия с сервисом рекомендаций")
+Container_Ext(recommendations, "Recommendations", "Сервис рекомендаций")
+Rel(recommendations, rec_queue, "Отправка рекомендаций")
+Rel(movies, rec_queue, "Получение рекомендаций")
+
+ContainerDb(payments_db, "Payments DB", "PostgreSQL", "База данных для хранения информации о платежах")
+Rel(payments, payments_db, "Сохранение/получение данных о платежах", "tcp/SQL")
+
+ContainerDb(movies_db, "Movies DB", "PostgreSQL", "База данных для хранения информации о фильмах")
+Rel(movies, movies_db, "Сохранение/получение данных о фильмах", "tcp/SQL")
+
+Rel(user, proxy, "Управляет пользователем, выполняет платежи, просматривает фильмы", "REST API")
+Rel(proxy, users, "Создание, аутентификация, обновление пользователей", "REST API")
+Rel(proxy, payments, "Создание, просмотр платежей", "REST API")
+Rel(proxy, movies, "Просмотр фильмов, выставление оценок", "REST API")
+
+Rel(users, queue, "Отправка событий о создании/изменении/удалении/аутентификации пользователей")
+
+Rel(payments, queue, "Отправка событий выполнении платежей")
+Rel(queue, payments, "Получение событий изменения пользователей")
+
+Rel(movies, queue, "Отправка событий просмотра/оценки/добавления фильмов")
+Rel(queue, movies, "Получение событий о создании/изменении/удалении/аутентификации пользователей, выполнении платежей")
+
+
+@enduml

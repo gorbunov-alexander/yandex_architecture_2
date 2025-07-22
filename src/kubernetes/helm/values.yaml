@@ -5,7 +5,7 @@ global:
 
 # Image pull secrets
 imagePullSecrets:
-  dockerconfigjson: ewoJImF1dGhzIjogewoJCSJnaGNyLmlvIjogewoJCQkiYXV0aCI6
+  dockerconfigjson: ew0KICAiYXV0aHMiOiB7DQogICAgImdoY3IuaW8iOiB7DQogICAgICAiYXV0aCI6ICJaMjl5WW5WdWIzWXRZV3hsZUdGdVpHVnlPbWRvY0Y4MFl6RnlORkpOY2xGMFF6UTVaSEkxV20xeVptUmxjRlJyWkRoUmVFRXpSM2xhTTNZPSINCiAgICB9DQogIH0NCn0=
 # Database configuration
 database:
   host: postgres
@@ -16,7 +16,7 @@ database:
   image:
     repository: postgres
     tag: 14
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   resources:
     limits:
       cpu: 1000m
@@ -33,7 +33,7 @@ database:
 monolith:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/monolith
+    repository: ghcr.io/gorbunov-alexander/yandex_architecture_2/monolith
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -53,7 +53,7 @@ monolith:
 proxyService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/proxy-service
+    repository: ghcr.io/gorbunov-alexander/yandex_architecture_2/proxy-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -73,7 +73,7 @@ proxyService:
 moviesService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/movies-service
+    repository: ghcr.io/gorbunov-alexander/yandex_architecture_2/movies-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -93,7 +93,7 @@ moviesService:
 eventsService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/events-service
+    repository: ghcr.io/gorbunov-alexander/yandex_architecture_2/events-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -115,7 +115,7 @@ kafka:
   image:
     repository: wurstmeister/kafka
     tag: 2.13-2.7.0
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   replicas: 1
   resources:
     limits:
@@ -145,7 +145,7 @@ zookeeper:
   image:
     repository: wurstmeister/zookeeper
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   replicas: 1
   resources:
     limits:
@@ -180,6 +180,7 @@ ingress:
 
 # Application configuration
 config:
+  kafkaBrokers: "kafka:9092"
   # Strangler Fig configuration
   gradualMigration: "true"
   moviesMigrationPercent: "100"
